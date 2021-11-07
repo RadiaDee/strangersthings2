@@ -1,81 +1,83 @@
 import React, { useState } from 'react';   // just need regular react, react dom is for rendering
 import { Link } from 'react-router-dom';
 import {registerUser, loginUser } from '../api';
-// ==================LOGIN AND REGISTER FORM =====================
 
-const Login = ({ history, match, setToken }) => {       // 
+// ================== LOGIN AND REGISTER =====================
+
+const Login = ({ history, match, setToken }) => {    
     
-    // ======= varbiables =========== 
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+// ---------------------- varbiables being used ----------------------
+    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-// ======================= USER FORM =========================
+// ================== LOGIN AND REGISTER FORM ======================
     return (
         <div id="login">
-            <h1 className="form">Login or Register Here</h1>     {/*renders h1 tag*/}
-{/** IF STATEMENT to determine if we are registering, register function, if we are logging in, log in function */}
+              {/*rendering*/}
             
-            <form onSubmit={ (event) => { 
-                event.preventDefault();
 
-                if (match.url === "/register"){ //registerUser(username, password);
-                    const token = registerUser(username,password);
-                    setToken(token); 
-                    history.push("/login");
-                }                
-                if (match.url === "/login"){ 
-                    const token = loginUser(username, password);
-                    setToken(token); 
-                    history.push("/posts");
+    {/** start input form */}        
+            <form onSubmit={ async (event) => {         
+                event.preventDefault();    // onsubmit usually it will go to a new page, this prevents that
+
+                if (match.url === "/register"){ // if we are on register url
+                    const token = await registerUser(username,password, confirmPassword);    // register user w api
+                    setToken(token);              // update token
+                    history.push("/posts");     // send user to posts
                 }
 
-                } } >  
+                if (match.url === "/login"){    // if we are on login url
+                    const token = await loginUser(username, password);    // login user w api
+                    setToken(token);               // update token
+                    history.push("/posts");      // send user to posts
+                }
 
-{/** INPUT USERNAME */}
-                <div>
-                    <label className="form-label">username</label>
+                } } >       
+
+    {/** INPUT BOX USERNAME */}
+                    <div>
+                        <label className="form-label">Username</label>
+                            <input 
+                            type="text" 
+                            value={username} 
+                            placeholder ="your username" 
+                            required
+                            onChange = { (event)=> 
+                            { setUsername(event.target.value) } } />
+                    </div>
+
+    {/** INPUT BOX PASSWORD */}
+                    <div>
+                        <label className="form-label">Password</label>
                         <input 
-                        type="text" 
-                        value={username} 
-                        placeholder ="username" 
-                        required
-                        onChange = { (event)=> 
-                        { setUsername(event.target.value) } } />
-                </div>
+                            type="text" 
+                            value={password} 
+                            placeholder=""
+                            required 
+                            onChange = { (event)=> 
+                            { setPassword(event.target.value) } } />
+                    </div>
 
-{/** INPUT PASSWORD */}
-                <div>
-                    <label className="form-label">password</label>
-                    <input 
-                        type="text" 
-                        value={password} 
-                        placeholder=""
-                        required 
-                        onChange = { (event)=> 
-                        { setPassword(event.target.value) } } />
-                </div>
+    {/** INPUT BOX CONFIRM PASSWORD */}
+    {/**ternary if the url is register then show confirm password input */}
 
-{/** INPUT CONFIRM PASSWORD */}
-{/**start with ternary to see if the url is register */}
-
-                {match.url === "/register" ?
-                (<div>
-                    <label className="form-label">Confirm password</label>
-                    <input 
-                        type="text" 
-                        value={confirmPassword} 
-                        placeholder="" 
-                        required
-                        onChange = { (event)=> 
-                        { setConfirmPassword(event.target.value) } } />
-                </div>) : null}
-{/**buttons */}                
+                    {match.url === "/register" ?
+                    (<div>
+                        <label className="form-label">Confirm password</label>
+                        <input 
+                            type="text" 
+                            value={confirmPassword} 
+                            placeholder="" 
+                            required
+                            onChange = { (event)=> 
+                            { setConfirmPassword(event.target.value) } } />
+                    </div>) : null}
+    {/**buttons submit / logout */}                
                 
-                <button type="submit"
-                className="">
-                    
-                Submit</button>
+                <button type="submit"     // this connects button to onsubmit event handler
+                    className="submitButton">
+                    Submit</button>
 
                 <button onClick={ ()=> {
                     localStorage.removeItem("token");
@@ -83,12 +85,21 @@ const Login = ({ history, match, setToken }) => {       //
                     history.push("/login");
                 } }
                 >Log Out</button>
-{/**start with ternary to see if we are logged in or out */}
+
+    {/**Links for login or register */}
                             
-                {match.url === "/register"?
-                <Link to="/login">Already have an account?</Link>
-                : <Link to="/register">Dont have an account? </Link>
-            }
+                {match.url === "/register" ?
+                    <Link to="/login">Already have an account?</Link>
+                    : <Link to="/register">Dont have an account? </Link>
+                    }
+
+                {/* {isLoggedIn ?
+                <Messages/>             // import message comp and isLoggedIn
+                : null
+                } */}
+
+
+    {/**end form */}
             </form>
         </div>
     )
@@ -96,5 +107,3 @@ const Login = ({ history, match, setToken }) => {       //
 }
 
 export default Login;
-
-// take set token in as a prop here, when user clicks submit, we call the function api, itll return a token, adn then we will update the token

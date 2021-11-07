@@ -1,106 +1,62 @@
 import React, {useState, useEffect} from 'react';   // just need regular react, react dom is for rendering
-// useEffect called when componenet first populates
-// useState to update variable
 import { fetchPosts, createPost, createMessage } from '../api';
-import {Search } from '../component';
+import {Search, Messages} from "../component";
+import { findPostById } from '../api';
 
 // ===================== RENDER POSTS ====================================
-//use the api fetch call here
-const Posts = (props) => {
 
-    const posts = props.posts;     // start with array bc api fetch returns array
-    const token = props.token;
-    const setPosts = props.setPosts;
+const Posts = ( {posts, token, setPosts, history, setSelectedPost, storedPosts}) => {
 
+    // const posts = props.posts;     // array of posts in root app
+    // const token = props.token;      // user token
+    // const setPosts = props.setPosts;
 
-
-
-
-    useEffect( async ()=> {
-        const results = await fetchPosts();     // fetch posts gets posts
+// ---------------- useEffect api function grabs posts ---------------------------------
+    useEffect(         // may not need this bc its in root app
+        async ()=> {                  
+        const results = await fetchPosts();     
         setPosts( results );                 //  update state with posts
-    }, [] );    // use default second parameter as array
+    }, []);    // use default second parameter array
 
-// =================== POSTS =======================================
+// =================== POSTS ======================================= WORKS
     return (
-        <div>
-            
-            
-            
-            { posts.map( ( post, index )=>{   // go through the "map" grab each element as post and then grab the title which we display
+        <div> 
+            <h1>My posts</h1>
+            <p> <button onClick={ ()=> {
+                    localStorage.removeItem("token");
+                    history.push("/login");
+                } }
+                >Log Out</button>   </p>
+                    <Search storedPosts={storedPosts} setPosts={setPosts}/> 
+            { posts.map( ( post, index )=>{   // "map" each element and display
                 return (
 
-                <div key={index}>
+                <div key={post._id}>
+                    
                     <h2 >{post.title}</h2>
                     <p >{post.description}</p>
                     <p >{post.price}</p>
                     <p> {post.location}</p>
-                    <p> {post.author.username}</p>
-                    <p> { post.willDeliver} </p>
-                    <div>{ token? <Message token={token} /> : null } 
-                    
-                    </div>
-                    <button
-                    onClick ={ () => {
-
-                        history.push("post/" + post.index);
-                    }
-                        // go to postInfo
-
-                    }
-                    >More information on this item</button> {/** bring us to component with only that item */}
+                    {/* <p> {post.author.username}</p> */}
+                    <p> Will Deliver? (Enter true or false) { post.willDeliver} </p>
+                    <div>{ token? <Messages token={token} /> : null } {/** finish later????? */} </div>
+                   
+                   <button type="button" className="btn btn-success"
+                        onClick ={ () => { 
+                            // const myNewSelectedPost = findPostById(post._id, posts);
+                            // setSelectedPost(myNewSelectedPost); // update selected post this is in api
+                            history.push(`/posts/${post._id}`
+                            
+                            );
+                        }}> More information about this item</button> {/** bring us to component with only that item */}
                 </div>
                 )
             }) }
-
-
-            {/* <h1 className="hello">this is an H1 Tag</h1>     renders h1 tag */}
         
         </div>
     )
-
 }
 
-// ================= CREATE A NEW POST =================================================
 
-const NewPosts = ({token, posts, setPosts }) => {
-    const [title, setTitle] = useState("");
-    const [price, setPrice] = useState("");
-    const [description, setDescription] = useState("");
-    const [location, setLocation] = useState("");
-    const [deliver, setDeliver] = useState("");
-
-    return(
-
-        <form onSubmit={ (event)=> {
-            event.preventDefault();
-            const response = createPost( token, title, location, description, price, deliver);    // do we need to make this async?
-            setPosts([...posts, response]);
-            history.push('/posts');
-        }} >
-
-        <p>Create your post</p>
-
-        <label>Title</label>
-        <input onChange={(event)=> setTitle(event.target.value) } type="text" placeHolder="title" required />
-
-        <label>Price</label>
-        <input onChange={(event)=> setPrice(event.target.value) } type="text" placeHolder="price" required />  
-
-        <label>Description</label>
-        <input onChange={(event)=> setDescription(event.target.value) } type="text" placeHolder="description" required />
-
-        <label>Location</label>
-        <input onChange={(event)=> setLocation(event.target.value) } type="text" placeHolder="location" required />
-
-        <label>Deliver?</label>
-        <input onChange={(event)=> setDeliver(event.target.value) } type="text" placeHolder="deliver" required />
-
-        <button type="submit">Create new post</button>
-
-        </form>
-    )
-}
-
-export { Posts, NewPosts};
+export default Posts;
 // import this into App componenet
