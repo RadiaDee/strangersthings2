@@ -10,7 +10,6 @@ export const cohortName = '2107-CSU-RM-WEB-PT';
 
 export async function fetchPosts(token) {
     try{              
-
         if(token){      // if token we get more info
                         // if no token then we just get all posts
             const response = await fetch(`${baseURL}/${cohortName}/posts`,
@@ -25,7 +24,7 @@ export async function fetchPosts(token) {
             return result.data.posts;   // return the posts
             }
 
-        else{
+        else{     // other wise no token
             const response = await fetch(`${baseURL}/${cohortName}/posts`,
                 {   method: 'GET',
                     headers: {
@@ -38,21 +37,21 @@ export async function fetchPosts(token) {
         }   
     
     catch (error){      // error handle
-    console.error(error); 
+        console.error(error); 
     }
 
 } 
 
 // =============== USER END POINTS ==============================================================
 //===============================================================================================
-// ================== REGSTER USER & RETURN TOKEN =====================
+// ================== REGISTER USER & RETURN TOKEN =====================
 
-  export async function registerUser(username, password, confirmPassword){
+  export async function registerUser(setToken, username, password, confirmPassword){
     try{
         
         if (confirmPassword!==password) {      // see if passwords match  
-            alert("Your passwords dont match, Please try again");
-            return;  // no registration if dont match
+                alert("Your passwords dont match, Please try again");
+                return;  // no registration if dont match
             };
             
         const response = await fetch(`${baseURL}/${cohortName}/users/register`,   
@@ -64,8 +63,8 @@ export async function fetchPosts(token) {
 
                 body: JSON.stringify({
                     user: {
-                    username: username,
-                    password: password
+                        username: username,
+                        password: password
                     }
                 })
 
@@ -78,7 +77,7 @@ export async function fetchPosts(token) {
     }
 
     catch (error){      // error handle
-    console.error(error);    
+        console.error(error);    
     }
 }
 

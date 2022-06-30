@@ -8,6 +8,7 @@ import NewPosts from './NewPosts'
 import Search from './Search';
 import UserProfile from './UserProfile';
 import Messages from './Messages';
+import Title from './Title';
 
 
 export {
@@ -17,7 +18,7 @@ SinglePost,
 NewPosts,
 Search,
 UserProfile,
-Messages
-
+Messages,
+Title
 
 }

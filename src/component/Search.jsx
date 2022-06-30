@@ -1,6 +1,6 @@
 import React from "react";
 import {useState, useEffect} from 'react';
-
+// done but make sure its connected 
 // =========== SEARCH COMPONENT =======================================================
 
 const Search = ({storedPosts, setPosts}) => {
@@ -24,7 +24,13 @@ const Search = ({storedPosts, setPosts}) => {
     return (
         <div>
             <label>Search Posts </label>
-            <input value={searchValue} placeholder="search" onChange ={(event) => setSearchValue(event.target.value) }/>
+            <input 
+                type='text'
+                value={searchValue} 
+                placeholder="search" 
+                onChange ={(event) => setSearchValue(event.target.value) }
+                style={ {maxWidth: 75 + 'vw', height:7 + 'vh' } }
+            />
 
         </div>
     )
